@@ -96,7 +96,7 @@ namespace RDPSlave
     public class RDPSlaveViewModel : RDPSlaveModel
     {
         //private Application currApp;
-        SortedList<int, RDPFunctions.RDPConnection> connections = new SortedList<int, RDPFunctions.RDPConnection>();
+        RDPFunctions.PDPConnections connections = new RDPFunctions.PDPConnections();
         public bool isSilentProcessing = true;
         RDPFunctions.RDPConnection defaultConnection;
 
@@ -113,7 +113,7 @@ namespace RDPSlave
                 return startSession;
             }
         }
-        public SortedList<int, RDPFunctions.RDPConnection> Connections { get { return connections; } set { connections = value; NotifyPropertyChanged("Connections"); } }
+        public RDPFunctions.PDPConnections Connections { get { return connections; } set { connections = value; NotifyPropertyChanged("Connections"); } }
 
         public RDPSlaveViewModel(Application app) : this(app, new string[0]) { }
         public RDPSlaveViewModel(Application app, string[] startupArgs)
@@ -150,7 +150,7 @@ namespace RDPSlave
 
             jl.JumpItems.Add(jt);
 
-            foreach (KeyValuePair<int, RDPFunctions.RDPConnection> item in connections)
+            foreach (KeyValuePair<int, RDPFunctions.RDPConnection> item in connections.ConnectionList)
             {
                 jt = new JumpTask();
                 //jt.IconResourcePath = AppDomain.CurrentDomain.BaseDirectory + "\\Icons.dll";
@@ -169,27 +169,7 @@ namespace RDPSlave
         }
         private void ReadRDPconnections()
         {
-            XDocument doc = XDocument.Load(AppDomain.CurrentDomain.BaseDirectory + "\\RDPConnections.xml");
-            int i = 0;
-            foreach (var item in doc.Root.Elements())
-            {
-                RDPFunctions.RDPConnection rdp = new RDPFunctions.RDPConnection();
-                rdp.Host = ((XElement)item).Element("Host").Value.ToString();
-                rdp.Name = ((XElement)item).Element("Name").Value.ToString();
-                rdp.UserName = ((XElement)item).Element("Username").Value.ToString();
-                rdp.Password = ((XElement)item).Element("Password").Value.ToString();
-                rdp.Group = ((XElement)item).Element("Gruppe").Value.ToString();
-
-                bool isdefault = false;
-                bool.TryParse(((XElement)item).Element("Standard").Value.ToString(), out isdefault);
-                if (isdefault)
-                {
-                    defaultConnection = rdp;
-                }
-
-                i++;
-                connections.Add(i, rdp);
-            }
+            connections.LoadConnections();
         }
         private void ProcessStartupArgs(string[] startupArgs)
         {
@@ -198,9 +178,9 @@ namespace RDPSlave
                 int i;
                 if (int.TryParse(arg.ToUpper(),out i))
                 {
-                    if (connections.ContainsKey(i))
+                    if (connections.ConnectionList.ContainsKey(i))
                     {
-                        RDPFunctions.StartRDPSession(connections[i]);
+                        connections.ConnectionList[i].StartSession.Execute(null);
                     }
                 }
                 else

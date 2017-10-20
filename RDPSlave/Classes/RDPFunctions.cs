@@ -150,7 +150,7 @@ namespace RDPSlave.Classes
             public string UserName { get { return userName; } set { userName = value; NotifyPropertyChanged("UserName"); } }
             public string Password { get { return password; } set { password = value; NotifyPropertyChanged("Password"); } }
             public string Group { get { return group; } set { group = value; NotifyPropertyChanged("Group"); } }
-            public bool IsDefault { get { return isDefault; } set { IsDefault = value; NotifyPropertyChanged("IsDefault"); } }
+            public bool IsDefault { get { return isDefault; } set { isDefault = value; NotifyPropertyChanged("IsDefault"); } }
 
             public RDPConnection() { }
             public RDPConnection(string name, string host, string username, string password) : this(name,host,username,password,"") { }
