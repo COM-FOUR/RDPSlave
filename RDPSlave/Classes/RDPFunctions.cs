@@ -126,16 +126,18 @@ namespace RDPSlave.Classes
 
                 if (connectionList != null)
                 {
-                    result = connectionList.Values.Where(f => f.Host == host) != null;
+                    result = connectionList.Values.Any(f => f.Host == host);
                 }
 
                 return result;
             }
             public void StartSessionByHost(string host)
             {
-                if (connectionList != null)
+                if (connectionList != null && connectionList.Values.Any(f => f.Host == host))
                 {
+
                     RDPConnection rdp = connectionList.Values.Where(f => f.Host == host).First();
+                    
                     rdp.StartSession();
                 }
             }
@@ -145,14 +147,14 @@ namespace RDPSlave.Classes
 
                 if (connectionList!=null)
                 {
-                    result = connectionList.Values.Where(f => f.Name == hostname)!=null;
+                    result = connectionList.Values.Any(f => f.Name == hostname);
                 }
                 
                 return result;
             }
             public void StartSessionByHostName(string hostname)
             {
-                if (connectionList != null)
+                if (connectionList != null && connectionList.Values.Any(f => f.Name == hostname))
                 {
                     RDPConnection rdp = connectionList.Values.Where(f => f.Name == hostname).First();
                     rdp.StartSession();
