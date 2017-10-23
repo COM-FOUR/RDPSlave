@@ -4,6 +4,6 @@
              xmlns:local="clr-namespace:RDPSlave"
              Startup="Application_Startup">
     <Application.Resources>
-         
+        <local:MockViewModel x:Key="MockViewModel"/>
     </Application.Resources>
 </Application>

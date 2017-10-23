@@ -33,6 +33,10 @@ namespace RDPSlave
         }
     }
 
-    
-    
+    public class MockViewModel : RDPSlaveViewModel
+    {
+        public MockViewModel() { }
+    }
+
+
 }

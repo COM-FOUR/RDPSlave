@@ -13,7 +13,7 @@ namespace RDPSlave
 {
     public class RDPFunctions
     {
-        public class PDPConnections : RDPSlaveModel
+        public class RDPConnections : RDPSlaveModel
         {
             SortedList<int, RDPConnection> connectionList = new SortedList<int, RDPConnection>();
             bool hasDefaultConnection = false;

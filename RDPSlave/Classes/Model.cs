@@ -72,7 +72,7 @@ namespace RDPSlave
     public class RDPSlaveViewModel : RDPSlaveModel
     {
         //private Application currApp;
-        RDPFunctions.PDPConnections connections = new RDPFunctions.PDPConnections();
+        RDPFunctions.RDPConnections connections = new RDPFunctions.RDPConnections();
         public bool isSilentProcessing = true;
 
         RelayCommand startSession;
@@ -88,8 +88,9 @@ namespace RDPSlave
                 return startSession;
             }
         }
-        public RDPFunctions.PDPConnections Connections { get { return connections; } set { connections = value; NotifyPropertyChanged("Connections"); } }
+        public RDPFunctions.RDPConnections Connections { get { return connections; } set { connections = value; NotifyPropertyChanged("Connections"); } }
 
+        public RDPSlaveViewModel() : this(new Application(),new string[0]) { }
         public RDPSlaveViewModel(Application app) : this(app, new string[0]) { }
         public RDPSlaveViewModel(Application app, string[] startupArgs)
         {
