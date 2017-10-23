@@ -98,7 +98,6 @@ namespace RDPSlave
         //private Application currApp;
         RDPFunctions.PDPConnections connections = new RDPFunctions.PDPConnections();
         public bool isSilentProcessing = true;
-        RDPFunctions.RDPConnection defaultConnection;
 
         RelayCommand startSession;
         public ICommand LoginCommand
@@ -128,9 +127,9 @@ namespace RDPSlave
             }
             else
             {
-                if (defaultConnection!=null)
+                if (connections.HasDefaultConnection)
                 {
-                    RDPFunctions.StartRDPSession(defaultConnection.Host, defaultConnection.UserName, defaultConnection.Password);
+                    RDPFunctions.StartRDPSession(connections.DefaultConnection);
                 }
             }
 
@@ -180,7 +179,7 @@ namespace RDPSlave
                 {
                     if (connections.ConnectionList.ContainsKey(i))
                     {
-                        connections.ConnectionList[i].StartSession.Execute(null);
+                        connections.ConnectionList[i].StartSession();
                     }
                 }
                 else
@@ -189,6 +188,14 @@ namespace RDPSlave
                     {
                         case "SHOWWINDOW": isSilentProcessing = false; break;
                         default:
+                            if (connections.HostIsKnown(arg))
+                            {
+                                connections.StartSessionByHost(arg);
+                            }
+                            if (connections.HostNameIsKnown(arg))
+                            {
+                                connections.StartSessionByHostName(arg);
+                            }
                             break;
                     }
                 }

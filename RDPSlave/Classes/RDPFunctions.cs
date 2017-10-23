@@ -32,7 +32,7 @@ namespace RDPSlave.Classes
                 	}
                     else
                     {
-                        return connectionList.Values.Where(f => f.IsDefault = true).First();
+                        return connectionList.Values.Where(f => f.IsDefault == true).First();
                     }
                 }
             }
@@ -120,6 +120,45 @@ namespace RDPSlave.Classes
 
                 return result;
             }
+            public bool HostIsKnown(string host)
+            {
+                bool result = false;
+
+                if (connectionList != null)
+                {
+                    result = connectionList.Values.Where(f => f.Host == host) != null;
+                }
+
+                return result;
+            }
+            public void StartSessionByHost(string host)
+            {
+                if (connectionList != null)
+                {
+                    RDPConnection rdp = connectionList.Values.Where(f => f.Host == host).First();
+                    rdp.StartSession();
+                }
+            }
+            public bool HostNameIsKnown(string hostname)
+            {
+                bool result = false;
+
+                if (connectionList!=null)
+                {
+                    result = connectionList.Values.Where(f => f.Name == hostname)!=null;
+                }
+                
+                return result;
+            }
+            public void StartSessionByHostName(string hostname)
+            {
+                if (connectionList != null)
+                {
+                    RDPConnection rdp = connectionList.Values.Where(f => f.Name == hostname).First();
+                    rdp.StartSession();
+                }
+            }
+
         }
         public class RDPConnection : RDPSlaveModel
         {
@@ -132,17 +171,21 @@ namespace RDPSlave.Classes
 
             RelayCommand startSessionCommand;
 
-            public ICommand StartSession
+            public ICommand StartSessionCommand
             {
                 get
                 {
                     if (startSessionCommand == null)
                     {
-                        startSessionCommand = new RelayCommand(param => StartRDPSession(this.host,this.userName,this.password),
+                        startSessionCommand = new RelayCommand(param => this.StartSession(),
                             param => (this.host!=null & this.host!=""));
                     }
                     return startSessionCommand;
                 }
+            }
+            public void StartSession()
+            {
+                StartRDPSession(this.host, this.userName, this.password);
             }
 
             public string Name { get { return name; } set { name = value;NotifyPropertyChanged("Name"); } }
