@@ -9,7 +9,7 @@ using System.Xml;
 using System.Xml.Linq;
 using System.Windows.Input;
 
-namespace RDPSlave.Classes
+namespace RDPSlave
 {
     public class RDPFunctions
     {
@@ -228,5 +228,4 @@ namespace RDPSlave.Classes
             rdcProcess.Start();
         }
     }
-    
 }

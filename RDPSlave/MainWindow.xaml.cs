@@ -23,16 +23,6 @@ namespace RDPSlave
         public MainWindow()
         {
             InitializeComponent();
-            AddButtons();
-        }
-        
-        void AddButtons()
-        {
-        }
-
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-            Classes.RDPFunctions.StartRDPSession("192.168.15.2", "administrator@com-four.local", "Heute.2014!");
         }
     }
 }

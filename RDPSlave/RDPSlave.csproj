@@ -85,6 +85,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Classes\Helpers.cs" />
+    <Compile Include="Classes\Model.cs" />
     <Compile Include="Classes\RDPFunctions.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>

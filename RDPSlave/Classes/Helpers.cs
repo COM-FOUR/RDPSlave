@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
 
-namespace RDPSlave.Classes
+namespace RDPSlave
 {
     public static class Helpers
     {

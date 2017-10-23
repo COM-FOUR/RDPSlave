@@ -8,9 +8,46 @@
         Title="Kyranda's RDP Slave" Height="350" Width="525"
         Icon="rdp.ico"
         Name="mw">
-    <DockPanel>
-        <ListBox>
-            
-        </ListBox>
+    <Window.Resources>
+        <DataTemplate x:Key="connectionItem">
+            <Border BorderBrush="AliceBlue" BorderThickness="2" Margin="3" Background="Aqua">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="80"/>
+                        <ColumnDefinition Width="100"/>
+                        <ColumnDefinition Width="80"/>
+                        <ColumnDefinition Width="100"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="20"/>
+                        <RowDefinition Height="20"/>
+                        <RowDefinition Height="20"/>
+                        <RowDefinition Height="20"/>
+                    </Grid.RowDefinitions>
+                    <TextBlock  Text="Host" Margin="2"/>
+                    <TextBox Grid.Column="1" Text="{Binding Value.Host ,Mode=TwoWay}" Margin="2"/>
+                    <TextBlock Grid.Row="1" Text="Name" Margin="2"/>
+                    <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Value.Name ,Mode=TwoWay}" Margin="2"/>
+                    <TextBlock Grid.Row="2" Text="UserName" Margin="2"/>
+                    <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding Value.UserName ,Mode=TwoWay}" Margin="2"/>
+                    <TextBlock Grid.Row="3" Text="Password" Margin="2"/>
+                    <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding Value.Password ,Mode=TwoWay}" Margin="2"/>
+                    <TextBlock Grid.Column="2" Text="Gruppe" Margin="2"/>
+                    <TextBox Grid.Column="3" Text="{Binding Value.Group ,Mode=TwoWay}" Margin="2"/>
+                    <TextBlock Grid.Row="1" Grid.Column="2" Text="Standard" Margin="2"/>
+                    <CheckBox Grid.Row="1" Grid.Column="3" IsChecked="{Binding Value.IsDefault}"/>
+                </Grid>
+            </Border>
+        </DataTemplate>
+    </Window.Resources>
+    <DockPanel Background="BlanchedAlmond">
+        <StatusBar DockPanel.Dock="Bottom" BorderBrush="Aquamarine" BorderThickness="2" Margin="3">
+            <TextBlock>
+                <Run>Anzahl Verbindungen: </Run>
+                <Run Text="{Binding Connections.ConnectionList.Count, Mode=OneWay}"/>
+            </TextBlock>
+        </StatusBar>
+        <ListBox BorderBrush="Aquamarine" BorderThickness="2" Margin="3" Background="Bisque" ItemsSource="{Binding Connections.ConnectionList}" ScrollViewer.VerticalScrollBarVisibility="Visible" ItemTemplate="{StaticResource connectionItem}"/>
     </DockPanel>
 </Window>
