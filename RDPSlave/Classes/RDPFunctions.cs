@@ -15,11 +15,11 @@ namespace RDPSlave
     {
         public class RDPConnections : RDPSlaveModel
         {
-            SortedList<int, RDPConnection> connectionList = new SortedList<int, RDPConnection>();
+            List<RDPConnection> connectionList = new List<RDPConnection>();
             bool hasDefaultConnection = false;
             string lastErrorMessage = "";
 
-            public SortedList<int, RDPConnection> ConnectionList {get { return connectionList; } set { connectionList = value; NotifyPropertyChanged("ConnectionList"); } }
+            public List<RDPConnection> ConnectionList {get { return connectionList; } set { connectionList = value; NotifyPropertyChanged("ConnectionList"); } }
             public bool HasDefaultConnection { get { return hasDefaultConnection; } set { hasDefaultConnection = value; NotifyPropertyChanged("HasDefaultConnection"); } }
             public string LastErrorMessage { get { return lastErrorMessage; } }
 
@@ -32,7 +32,7 @@ namespace RDPSlave
                 	}
                     else
                     {
-                        return connectionList.Values.Where(f => f.IsDefault == true).First();
+                        return connectionList.Where(f => f.IsDefault == true).First();
                     }
                 }
             }
@@ -52,7 +52,7 @@ namespace RDPSlave
 
                 try
                 {
-                    connectionList = new SortedList<int, RDPConnection>();
+                    connectionList = new List<RDPConnection>();
 
                     XDocument doc = XDocument.Load(fileName);
                     int i = 0;
@@ -81,13 +81,14 @@ namespace RDPSlave
                         i++;
                         if (order>0)
                         {
-                            connectionList.Add(order, rdp);
+                            rdp.Order = order;
                         }
                         else
                         {
-                            connectionList.Add(i, rdp);
+                            rdp.Order = i;
                         }
-                        
+
+                        connectionList.Add(rdp);
                     }
 
                     result = true;
@@ -126,17 +127,17 @@ namespace RDPSlave
 
                 if (connectionList != null)
                 {
-                    result = connectionList.Values.Any(f => f.Host == host);
+                    result = connectionList.Any(f => f.Host == host);
                 }
 
                 return result;
             }
             public void StartSessionByHost(string host)
             {
-                if (connectionList != null && connectionList.Values.Any(f => f.Host == host))
+                if (connectionList != null && connectionList.Any(f => f.Host == host))
                 {
 
-                    RDPConnection rdp = connectionList.Values.Where(f => f.Host == host).First();
+                    RDPConnection rdp = connectionList.Where(f => f.Host == host).First();
                     
                     rdp.StartSession();
                 }
@@ -147,16 +148,16 @@ namespace RDPSlave
 
                 if (connectionList!=null)
                 {
-                    result = connectionList.Values.Any(f => f.Name == hostname);
+                    result = connectionList.Any(f => f.Name == hostname);
                 }
                 
                 return result;
             }
             public void StartSessionByHostName(string hostname)
             {
-                if (connectionList != null && connectionList.Values.Any(f => f.Name == hostname))
+                if (connectionList != null && connectionList.Any(f => f.Name == hostname))
                 {
-                    RDPConnection rdp = connectionList.Values.Where(f => f.Name == hostname).First();
+                    RDPConnection rdp = connectionList.Where(f => f.Name == hostname).First();
                     rdp.StartSession();
                 }
             }
@@ -164,6 +165,7 @@ namespace RDPSlave
         }
         public class RDPConnection : RDPSlaveModel
         {
+            int order;
             string name;
             string host;
             string userName;
@@ -171,25 +173,12 @@ namespace RDPSlave
             string group;
             bool isDefault;
 
-            RelayCommand startSessionCommand;
-
-            public ICommand StartSessionCommand
-            {
-                get
-                {
-                    if (startSessionCommand == null)
-                    {
-                        startSessionCommand = new RelayCommand(param => this.StartSession(),
-                            param => (this.host!=null & this.host!=""));
-                    }
-                    return startSessionCommand;
-                }
-            }
             public void StartSession()
             {
                 StartRDPSession(this.host, this.userName, this.password);
             }
 
+            public int Order { get { return order; } set { order = value; NotifyPropertyChanged("Order"); } }
             public string Name { get { return name; } set { name = value;NotifyPropertyChanged("Name"); } }
             public string Host { get { return host; } set { host = value; NotifyPropertyChanged("Host"); } }
             public string UserName { get { return userName; } set { userName = value; NotifyPropertyChanged("UserName"); } }
@@ -198,9 +187,10 @@ namespace RDPSlave
             public bool IsDefault { get { return isDefault; } set { isDefault = value; NotifyPropertyChanged("IsDefault"); } }
 
             public RDPConnection() { }
-            public RDPConnection(string name, string host, string username, string password) : this(name,host,username,password,"") { }
-            public RDPConnection(string name, string host, string username, string password, string group) : this(name, host, username, password, group, false) { }
-            public RDPConnection(string name, string host, string username, string password, string group, bool isdefault)
+            public RDPConnection(int order) : this(order, "", "", "", "", "") { }
+            public RDPConnection(int order, string name, string host, string username, string password) : this(order,name, host,username,password,"") { }
+            public RDPConnection(int order, string name, string host, string username, string password, string group) : this(order,name, host, username, password, group, false) { }
+            public RDPConnection(int order, string name, string host, string username, string password, string group, bool isdefault)
             {
                 this.name = name;
                 this.host = host;

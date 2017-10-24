@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -72,23 +73,82 @@ namespace RDPSlave
     public class RDPSlaveViewModel : RDPSlaveModel
     {
         //private Application currApp;
+        
         RDPFunctions.RDPConnections connections = new RDPFunctions.RDPConnections();
+
+        RDPFunctions.RDPConnection selectedRDPConnection = new RDPFunctions.RDPConnection();
+
         public bool isSilentProcessing = true;
 
-        RelayCommand startSession;
-        public ICommand LoginCommand
+        RelayCommand startSessionCommand;
+        RelayCommand deleteConnectionCommand;
+        RelayCommand createConnectionCommand;
+        RelayCommand saveConnectionsCommand;
+        RelayCommand loadConnectionsCommand;
+
+        public ICommand StartSessionCommand
         {
             get
             {
-                if (startSession == null)
+                if (startSessionCommand == null)
                 {
-                    startSession = new RelayCommand(param => RDPFunctions.StartRDPSession("", "", ""),
+                    startSessionCommand = new RelayCommand(param => selectedRDPConnection.StartSession(),
+                        param => this.selectedRDPConnection!=null);
+                }
+                return startSessionCommand;
+            }
+        }
+        public ICommand DeleteConnectionCommand
+        {
+            get
+            {
+                if (deleteConnectionCommand == null)
+                {
+                    deleteConnectionCommand = new RelayCommand(param => this.DeleteSelectedRDPConnection(),
+                        param => this.selectedRDPConnection != null);
+                }
+                return deleteConnectionCommand;
+            }
+        }
+        public ICommand CreateConnectionCommand
+        {
+            get
+            {
+                if (createConnectionCommand == null)
+                {
+                    createConnectionCommand = new RelayCommand(param => this.CreateRDPConnection(),
                         param => true);
                 }
-                return startSession;
+                return createConnectionCommand;
+            }
+        }
+        public ICommand SaveConnectionsCommand
+        {
+            get
+            {
+                if (saveConnectionsCommand == null)
+                {
+                    saveConnectionsCommand = new RelayCommand(param => this.WriteRDPConnections(true),
+                        param => this.connections.ConnectionList.Count>0);
+                }
+                return saveConnectionsCommand;
+            }
+        }
+        public ICommand LoadConnectionsCommand
+        {
+            get
+            {
+                if (loadConnectionsCommand == null)
+                {
+                    loadConnectionsCommand = new RelayCommand(param => this.ReadRDPConnections(true),
+                        param => true);
+                }
+                return loadConnectionsCommand;
             }
         }
         public RDPFunctions.RDPConnections Connections { get { return connections; } set { connections = value; NotifyPropertyChanged("Connections"); } }
+        public ObservableCollection<RDPFunctions.RDPConnection> ConnectionList { get { return new ObservableCollection<RDPFunctions.RDPConnection>(connections.ConnectionList); } set { connections.ConnectionList = value.ToList<RDPFunctions.RDPConnection>(); NotifyPropertyChanged("ConnectionList"); } }
+        public RDPFunctions.RDPConnection SelectedRDPConnection { get { return selectedRDPConnection; } set { selectedRDPConnection = value; NotifyPropertyChanged("SelectedRDPConnection"); } }
 
         public RDPSlaveViewModel() : this(new Application(),new string[0]) { }
         public RDPSlaveViewModel(Application app) : this(app, new string[0]) { }
@@ -96,7 +156,7 @@ namespace RDPSlave
         {
             //currApp = app;
 
-            ReadRDPconnections();
+            ReadRDPConnections();
 
             if (startupArgs.Length > 0)
             {
@@ -126,15 +186,15 @@ namespace RDPSlave
 
             jl.JumpItems.Add(jt);
 
-            foreach (KeyValuePair<int, RDPFunctions.RDPConnection> item in connections.ConnectionList)
+            foreach (RDPFunctions.RDPConnection item in connections.ConnectionList)
             {
                 jt = new JumpTask();
                 //jt.IconResourcePath = AppDomain.CurrentDomain.BaseDirectory + "\\Icons.dll";
 
-                jt.Title = item.Value.Name;
-                jt.Description = item.Value.Host;
-                jt.Arguments = item.Key.ToString();
-                jt.CustomCategory = item.Value.Group;
+                jt.Title = item.Name;
+                jt.Description = item.Host;
+                jt.Arguments = item.Name;
+                jt.CustomCategory = item.Group;
                 jt.ApplicationPath = Assembly.GetEntryAssembly().CodeBase;
                 jt.IconResourcePath = Assembly.GetEntryAssembly().CodeBase;
 
@@ -143,40 +203,90 @@ namespace RDPSlave
             JumpList.SetJumpList(Application.Current, jl);
             //jl.Apply();
         }
-        private void ReadRDPconnections()
+        private void ReadRDPConnections()
         {
-            connections.LoadConnections();
+            ReadRDPConnections(false);
         }
+        private void ReadRDPConnections(bool confirm)
+        {
+            if (confirm)
+            {
+                MessageBoxResult result = MessageBox.Show("RDP Verbindungen aus Datei laden?", "Laden", MessageBoxButton.YesNo);
+                if (result!= MessageBoxResult.Yes)
+                {
+                    return;
+                }
+            }
+
+            connections.LoadConnections();
+            NotifyPropertyChanged("ConnectionList");
+            if (connections.ConnectionList.Count>0)
+            {
+                selectedRDPConnection = connections.ConnectionList.First();
+            }
+        }
+        private void WriteRDPConnections()
+        {
+            WriteRDPConnections(false);
+        }
+        private void WriteRDPConnections(bool confirm)
+        {
+            if (confirm)
+            {
+                MessageBoxResult result = MessageBox.Show("RDP Verbindungen in Datei speichern?", "Speichern", MessageBoxButton.YesNo);
+                if (result != MessageBoxResult.Yes)
+                {
+                    return;
+                }
+            }
+            connections.SaveConnections();
+            NotifyPropertyChanged("ConnectionList");
+        }
+        private void DeleteSelectedRDPConnection()
+        {
+            MessageBoxResult result = MessageBox.Show("Aktuelle RDP Verbindung entfernen?", "Löschen", MessageBoxButton.YesNo);
+            if (result != MessageBoxResult.Yes)
+            {
+                return;
+            }
+
+            connections.ConnectionList.Remove(selectedRDPConnection);
+            
+            NotifyPropertyChanged("ConnectionList");
+        }
+        private void CreateRDPConnection()
+        {
+            if (connections.ConnectionList.Any())
+            {
+                var lastItem = connections.ConnectionList.Last();
+                connections.ConnectionList.Add(new RDPFunctions.RDPConnection(lastItem.Order + 1));
+            }
+            else
+            {
+                connections.ConnectionList.Add(new RDPFunctions.RDPConnection(1));
+            }
+            
+            NotifyPropertyChanged("ConnectionList");
+        }
+
         private void ProcessStartupArgs(string[] startupArgs)
         {
             foreach (string arg in startupArgs)
             {
-                int i;
-                if (int.TryParse(arg.ToUpper(), out i))
+                switch (arg.ToUpper())
                 {
-                    if (connections.ConnectionList.ContainsKey(i))
-                    {
-                        connections.ConnectionList[i].StartSession();
-                    }
+                    case "SHOWWINDOW": isSilentProcessing = false; break;
+                    default:
+                        if (connections.HostIsKnown(arg))
+                        {
+                            connections.StartSessionByHost(arg);
+                        }
+                        if (connections.HostNameIsKnown(arg))
+                        {
+                            connections.StartSessionByHostName(arg);
+                        }
+                        break;
                 }
-                else
-                {
-                    switch (arg.ToUpper())
-                    {
-                        case "SHOWWINDOW": isSilentProcessing = false; break;
-                        default:
-                            if (connections.HostIsKnown(arg))
-                            {
-                                connections.StartSessionByHost(arg);
-                            }
-                            if (connections.HostNameIsKnown(arg))
-                            {
-                                connections.StartSessionByHostName(arg);
-                            }
-                            break;
-                    }
-                }
-
             }
         }
     }
