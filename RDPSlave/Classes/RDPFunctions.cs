@@ -7,7 +7,6 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
-using System.Windows.Input;
 
 namespace RDPSlave
 {
@@ -108,8 +107,32 @@ namespace RDPSlave
             public bool SaveConnections(string fileName)
             {
                 bool result = false;
+
+                if (fileName == null || fileName == "")
+                {
+                    fileName = AppDomain.CurrentDomain.BaseDirectory + "\\RDPConnections.xml";
+                }
+
                 try
                 {
+                    XmlWriter writer = XmlWriter.Create(fileName);
+                    writer.WriteStartDocument();
+                    writer.WriteStartElement("RDPConnections");
+                    foreach (var item in connectionList)
+                    {
+                        writer.WriteStartElement("RDPConnection");
+                        writer.WriteElementString("Name", item.Name);
+                        writer.WriteElementString("Host", item.Host);
+                        writer.WriteElementString("UserName", item.UserName);
+                        writer.WriteElementString("Password", item.Password);
+                        writer.WriteElementString("Group", item.Group);
+                        writer.WriteElementString("Default", item.IsDefault.ToString());
+                        writer.WriteElementString("Order", item.Order.ToString());
+                        writer.WriteEndElement();
+                    }
+                    writer.WriteEndElement();
+                    writer.WriteEndDocument();
+                    writer.Close();
 
                     result = true;
                 }
