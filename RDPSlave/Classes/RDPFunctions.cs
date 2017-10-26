@@ -5,6 +5,7 @@ using System.Linq;
 using System.Security;
 using System.Text;
 using System.Threading.Tasks;
+using System.IO;
 using System.Xml;
 using System.Xml.Linq;
 
@@ -17,7 +18,7 @@ namespace RDPSlave
             List<RDPConnection> connectionList = new List<RDPConnection>();
             bool hasDefaultConnection = false;
             string lastErrorMessage = "";
-
+            
             public List<RDPConnection> ConnectionList {get { return connectionList; } set { connectionList = value; NotifyPropertyChanged("ConnectionList"); } }
             public bool HasDefaultConnection { get { return hasDefaultConnection; } set { hasDefaultConnection = value; NotifyPropertyChanged("HasDefaultConnection"); } }
             public string LastErrorMessage { get { return lastErrorMessage; } }
@@ -43,7 +44,7 @@ namespace RDPSlave
             public bool LoadConnections(string fileName)
             {
                 bool result = false;
-
+                
                 if (fileName==null || fileName=="")
                 {
                     fileName = AppDomain.CurrentDomain.BaseDirectory + "\\RDPConnections.xml";
@@ -52,7 +53,7 @@ namespace RDPSlave
                 try
                 {
                     connectionList = new List<RDPConnection>();
-
+                    
                     XDocument doc = XDocument.Load(fileName);
                     int i = 0;
                     foreach (var item in doc.Root.Elements())
@@ -89,7 +90,7 @@ namespace RDPSlave
 
                         connectionList.Add(rdp);
                     }
-
+                    
                     result = true;
                 }
                 catch (Exception e)
@@ -110,36 +111,43 @@ namespace RDPSlave
 
                 if (fileName == null || fileName == "")
                 {
-                    fileName = AppDomain.CurrentDomain.BaseDirectory + "\\RDPConnections.xml";
+                    fileName = AppDomain.CurrentDomain.BaseDirectory + "RDPConnections.xml";
                 }
 
                 try
                 {
-                    XmlWriter writer = XmlWriter.Create(fileName);
-                    writer.WriteStartDocument();
-                    writer.WriteStartElement("RDPConnections");
-                    foreach (var item in connectionList)
+                    using (XmlWriter writer = XmlWriter.Create(fileName))
                     {
-                        writer.WriteStartElement("RDPConnection");
-                        writer.WriteElementString("Name", item.Name);
-                        writer.WriteElementString("Host", item.Host);
-                        writer.WriteElementString("UserName", item.UserName);
-                        writer.WriteElementString("Password", item.Password);
-                        writer.WriteElementString("Group", item.Group);
-                        writer.WriteElementString("Default", item.IsDefault.ToString());
-                        writer.WriteElementString("Order", item.Order.ToString());
+                        writer.WriteStartDocument();
+                        writer.WriteStartElement("RDPConnections");
+                        foreach (var item in connectionList)
+                        {
+                            writer.WriteStartElement("RDPConnection");
+                            writer.WriteElementString("Name", item.Name);
+                            writer.WriteElementString("Host", item.Host);
+                            writer.WriteElementString("UserName", item.UserName);
+                            writer.WriteElementString("Password", item.Password);
+                            writer.WriteElementString("Group", item.Group);
+                            writer.WriteElementString("Default", item.IsDefault.ToString());
+                            writer.WriteElementString("Order", item.Order.ToString());
+                            writer.WriteEndElement();
+                        }
                         writer.WriteEndElement();
+                        writer.WriteEndDocument();
                     }
-                    writer.WriteEndElement();
-                    writer.WriteEndDocument();
-                    writer.Close();
 
+                    if (RDPSlave.Properties.Settings.Default.EncryptConnectionFile)
+                    {
+                        File.Encrypt(fileName);
+                    }
+                    
                     result = true;
                 }
                 catch (Exception e)
                 {
                     lastErrorMessage = e.Message;
                     NotifyPropertyChanged("LastErrorMessage");
+                    
                 }
 
                 return result;
