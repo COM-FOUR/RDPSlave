@@ -27,17 +27,17 @@
                         <RowDefinition Height="20"/>
                     </Grid.RowDefinitions>
                     <TextBlock  Text="Host" Margin="2"/>
-                    <TextBox Grid.Column="1" Text="{Binding Host ,Mode=TwoWay}" Margin="2"/>
+                    <TextBox Grid.Column="1" Text="{Binding Host ,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="2"/>
                     <TextBlock Grid.Row="1" Text="Name" Margin="2"/>
-                    <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Name ,Mode=TwoWay}" Margin="2"/>
+                    <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Name ,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="2"/>
                     <TextBlock Grid.Row="2" Text="UserName" Margin="2"/>
-                    <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding UserName ,Mode=TwoWay}" Margin="2"/>
+                    <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding UserName ,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="2"/>
                     <TextBlock Grid.Row="3" Text="Password" Margin="2"/>
-                    <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding Password ,Mode=TwoWay}" Margin="2"/>
+                    <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding Password ,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="2"/>
                     <TextBlock Grid.Column="2" Text="Gruppe" Margin="2"/>
-                    <TextBox Grid.Column="3" Text="{Binding Group ,Mode=TwoWay}" Margin="2"/>
+                    <TextBox Grid.Column="3" Text="{Binding Group ,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="2"/>
                     <TextBlock Grid.Row="1" Grid.Column="2" Text="Standard" Margin="2"/>
-                    <CheckBox Grid.Row="1" Grid.Column="3" IsChecked="{Binding IsDefault}"/>
+                    <CheckBox Grid.Row="1" Grid.Column="3" IsChecked="{Binding IsDefault, UpdateSourceTrigger=PropertyChanged}"/>
                 </Grid>
             </Border>
         </DataTemplate>

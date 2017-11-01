@@ -241,6 +241,7 @@ namespace RDPSlave
             }
             connections.SaveConnections();
             NotifyPropertyChanged("ConnectionList");
+            this.CreateJumpList();
         }
         private void DeleteSelectedRDPConnection()
         {
@@ -268,7 +269,6 @@ namespace RDPSlave
             
             NotifyPropertyChanged("ConnectionList");
         }
-
         private void ProcessStartupArgs(string[] startupArgs)
         {
             foreach (string arg in startupArgs)
