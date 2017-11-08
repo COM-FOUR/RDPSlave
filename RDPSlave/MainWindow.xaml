@@ -58,8 +58,9 @@
                 <Run>Anzahl Verbindungen: </Run>
                 <Run Text="{Binding ConnectionList.Count, Mode=OneWay}"/>
             </TextBlock>
+            <Separator></Separator>
             <TextBlock>
-                <Run Text="{Binding Connections.LastErrorMessage, Mode=OneWay}"></Run>
+                <Run Text="{Binding Connections.LastErrorMessage, Mode=OneWay}" Foreground="Red"></Run>
             </TextBlock>
         </StatusBar>
         <ListBox BorderBrush="Aquamarine" BorderThickness="2" Margin="3" Background="DimGray" ItemsSource="{Binding ConnectionList, Mode=TwoWay}" ScrollViewer.VerticalScrollBarVisibility="Visible" ItemTemplate="{StaticResource connectionItem}" SelectedItem="{Binding SelectedRDPConnection, Mode=TwoWay}"/>
