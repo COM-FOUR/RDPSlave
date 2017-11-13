@@ -15,14 +15,16 @@ namespace RDPSlave
     {
         public class RDPConnections : RDPSlaveModel
         {
+            #region Locals
             List<RDPConnection> connectionList = new List<RDPConnection>();
             bool hasDefaultConnection = false;
             string lastErrorMessage = "";
-            
+            #endregion
+
+            #region Globals
             public List<RDPConnection> ConnectionList {get { return connectionList; } set { connectionList = value; NotifyPropertyChanged("ConnectionList"); } }
             public bool HasDefaultConnection { get { return hasDefaultConnection; } set { hasDefaultConnection = value; NotifyPropertyChanged("HasDefaultConnection"); } }
             public string LastErrorMessage { get { return lastErrorMessage; } }
-
             public RDPConnection DefaultConnection { 
                 get 
                 {
@@ -36,7 +38,9 @@ namespace RDPSlave
                     }
                 }
             }
+            #endregion
 
+            #region Methods
             public bool LoadConnections()
             {
                 return (LoadConnections(""));
@@ -192,23 +196,22 @@ namespace RDPSlave
                     rdp.StartSession();
                 }
             }
+            #endregion
 
         }
         public class RDPConnection : RDPSlaveModel
         {
-            int order;
-            string name;
-            string host;
-            string userName;
-            string password;
-            string group;
-            bool isDefault;
-
-            public void StartSession()
-            {
-                StartRDPSession(this.host, this.userName, this.password);
-            }
-
+            #region Locals
+            internal int order;
+            internal string name;
+            internal string host;
+            internal string userName;
+            internal string password;
+            internal string group;
+            internal bool isDefault;
+            #endregion
+            
+            #region Globals
             public int Order { get { return order; } set { order = value; NotifyPropertyChanged("Order"); } }
             public string Name { get { return name; } set { name = value;NotifyPropertyChanged("Name"); } }
             public string Host { get { return host; } set { host = value; NotifyPropertyChanged("Host"); } }
@@ -216,7 +219,9 @@ namespace RDPSlave
             public string Password { get { return password; } set { password = value; NotifyPropertyChanged("Password"); } }
             public string Group { get { return group; } set { group = value; NotifyPropertyChanged("Group"); } }
             public bool IsDefault { get { return isDefault; } set { isDefault = value; NotifyPropertyChanged("IsDefault"); } }
+            #endregion
 
+            #region Constructors
             public RDPConnection() { }
             public RDPConnection(int order) : this(order, "", "", "", "", "") { }
             public RDPConnection(int order, string name, string host, string username, string password) : this(order,name, host,username,password,"") { }
@@ -230,7 +235,17 @@ namespace RDPSlave
                 this.group = group;
                 this.isDefault = isdefault;
             }
+            #endregion
+
+            #region Methods
+            public void StartSession()
+            {
+                StartRDPSession(this.host, this.userName, this.password);
+            }
+            #endregion
         }
+
+        #region Static Methods
         public static void StartRDPSession(RDPConnection rdp)
         {
             StartRDPSession(rdp.Host, rdp.UserName, rdp.Password);
@@ -248,5 +263,6 @@ namespace RDPSlave
             rdcProcess.StartInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
             rdcProcess.Start();
         }
+        #endregion
     }
 }

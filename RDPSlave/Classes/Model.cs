@@ -73,13 +73,14 @@ namespace RDPSlave
     public class RDPSlaveViewModel : RDPSlaveModel
     {
         //private Application currApp;
-        
-        RDPFunctions.RDPConnections connections = new RDPFunctions.RDPConnections();
 
-        RDPFunctions.RDPConnection selectedRDPConnection = new RDPFunctions.RDPConnection();
+        #region Locals
+        internal RDPFunctions.RDPConnections connections = new RDPFunctions.RDPConnections();
+        internal RDPFunctions.RDPConnection selectedRDPConnection = new RDPFunctions.RDPConnection();
+        internal bool silentProcessing = true;
+        #endregion
 
-        public bool isSilentProcessing = true;
-
+        #region Comamnds
         RelayCommand startSessionCommand;
         RelayCommand deleteConnectionCommand;
         RelayCommand createConnectionCommand;
@@ -146,10 +147,17 @@ namespace RDPSlave
                 return loadConnectionsCommand;
             }
         }
+        #endregion
+
+        #region Globals
         public RDPFunctions.RDPConnections Connections { get { return connections; } set { connections = value; NotifyPropertyChanged("Connections"); } }
         public ObservableCollection<RDPFunctions.RDPConnection> ConnectionList { get { return new ObservableCollection<RDPFunctions.RDPConnection>(connections.ConnectionList); } set { connections.ConnectionList = value.ToList<RDPFunctions.RDPConnection>(); NotifyPropertyChanged("ConnectionList"); } }
         public RDPFunctions.RDPConnection SelectedRDPConnection { get { return selectedRDPConnection; } set { selectedRDPConnection = value; NotifyPropertyChanged("SelectedRDPConnection"); } }
+        public bool isSilentProcessing { get { return silentProcessing; } }
 
+        #endregion
+
+        #region Constructors
         public RDPSlaveViewModel() : this(new Application(),new string[0]) { }
         public RDPSlaveViewModel(Application app) : this(app, new string[0]) { }
         public RDPSlaveViewModel(Application app, string[] startupArgs)
@@ -173,6 +181,9 @@ namespace RDPSlave
             CreateJumpList();
 
         }
+        #endregion
+
+        #region Methods
         private void CreateJumpList()
         {
             JumpList jl = new JumpList();
@@ -275,7 +286,7 @@ namespace RDPSlave
             {
                 switch (arg.ToUpper())
                 {
-                    case "SHOWWINDOW": isSilentProcessing = false; break;
+                    case "SHOWWINDOW": silentProcessing = false; break;
                     default:
                         if (connections.HostIsKnown(arg))
                         {
@@ -289,5 +300,6 @@ namespace RDPSlave
                 }
             }
         }
+        #endregion
     }
 }
