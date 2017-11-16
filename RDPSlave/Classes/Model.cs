@@ -14,6 +14,9 @@ using System.Windows;
 
 namespace RDPSlave
 {
+    /// <summary>
+    /// model for mvvm pattern
+    /// </summary>
     public class RDPSlaveModel : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
@@ -70,6 +73,9 @@ namespace RDPSlave
             #endregion // ICommand Members
         }
     }
+    /// <summary>
+    /// viewmodel for mvvm pattern
+    /// </summary>
     public class RDPSlaveViewModel : RDPSlaveModel
     {
         //private Application currApp;
@@ -81,12 +87,15 @@ namespace RDPSlave
         #endregion
 
         #region Comamnds
-        RelayCommand startSessionCommand;
-        RelayCommand deleteConnectionCommand;
-        RelayCommand createConnectionCommand;
-        RelayCommand saveConnectionsCommand;
-        RelayCommand loadConnectionsCommand;
+        internal RelayCommand startSessionCommand;
+        internal RelayCommand deleteConnectionCommand;
+        internal RelayCommand createConnectionCommand;
+        internal RelayCommand saveConnectionsCommand;
+        internal RelayCommand loadConnectionsCommand;
 
+        /// <summary>
+        /// starts session for currently selected RDPConnection
+        /// </summary>
         public ICommand StartSessionCommand
         {
             get
@@ -99,6 +108,9 @@ namespace RDPSlave
                 return startSessionCommand;
             }
         }
+        /// <summary>
+        /// delete currently selected RDPConnection
+        /// </summary>
         public ICommand DeleteConnectionCommand
         {
             get
@@ -111,6 +123,9 @@ namespace RDPSlave
                 return deleteConnectionCommand;
             }
         }
+        /// <summary>
+        /// create new, empty RDPConnection in ConnectionList
+        /// </summary>
         public ICommand CreateConnectionCommand
         {
             get
@@ -123,6 +138,9 @@ namespace RDPSlave
                 return createConnectionCommand;
             }
         }
+        /// <summary>
+        /// save current ConnectionList to file
+        /// </summary>
         public ICommand SaveConnectionsCommand
         {
             get
@@ -135,6 +153,9 @@ namespace RDPSlave
                 return saveConnectionsCommand;
             }
         }
+        /// <summary>
+        /// load ConnectionList from file
+        /// </summary>
         public ICommand LoadConnectionsCommand
         {
             get
@@ -150,9 +171,21 @@ namespace RDPSlave
         #endregion
 
         #region Globals
+        /// <summary>
+        /// wrapper including a list of rdp connections
+        /// </summary>
         public RDPFunctions.RDPConnections Connections { get { return connections; } set { connections = value; NotifyPropertyChanged("Connections"); } }
+        /// <summary>
+        /// observable list of RDPConnection for binding purpose
+        /// </summary>
         public ObservableCollection<RDPFunctions.RDPConnection> ConnectionList { get { return new ObservableCollection<RDPFunctions.RDPConnection>(connections.ConnectionList); } set { connections.ConnectionList = value.ToList<RDPFunctions.RDPConnection>(); NotifyPropertyChanged("ConnectionList"); } }
+        /// <summary>
+        /// currently ,via binding selected RDPCOnnection
+        /// </summary>
         public RDPFunctions.RDPConnection SelectedRDPConnection { get { return selectedRDPConnection; } set { selectedRDPConnection = value; NotifyPropertyChanged("SelectedRDPConnection"); } }
+        /// <summary>
+        /// indicator if mainwindow should be shown, or not
+        /// </summary>
         public bool isSilentProcessing { get { return silentProcessing; } }
 
         #endregion
@@ -184,6 +217,9 @@ namespace RDPSlave
         #endregion
 
         #region Methods
+        /// <summary>
+        /// creates windows jumplist
+        /// </summary>
         private void CreateJumpList()
         {
             JumpList jl = new JumpList();
@@ -214,10 +250,17 @@ namespace RDPSlave
             JumpList.SetJumpList(Application.Current, jl);
             //jl.Apply();
         }
+        /// <summary>
+        /// load rdp connections from file
+        /// </summary>
         private void ReadRDPConnections()
         {
             ReadRDPConnections(false);
         }
+        /// <summary>
+        /// load rdp connections from file
+        /// </summary>
+        /// <param name="confirm">show confirmation dialog</param>
         private void ReadRDPConnections(bool confirm)
         {
             if (confirm)
@@ -236,10 +279,17 @@ namespace RDPSlave
                 selectedRDPConnection = connections.ConnectionList.First();
             }
         }
+        /// <summary>
+        /// save rdp connections to file
+        /// </summary>
         private void WriteRDPConnections()
         {
             WriteRDPConnections(false);
         }
+        /// <summary>
+        /// save rdp connections to file
+        /// </summary>
+        /// <param name="confirm">show confirmation dialog</param>
         private void WriteRDPConnections(bool confirm)
         {
             if (confirm)
@@ -254,6 +304,9 @@ namespace RDPSlave
             NotifyPropertyChanged("ConnectionList");
             this.CreateJumpList();
         }
+        /// <summary>
+        /// deletes currently selected RDPConnection from ConnectionList
+        /// </summary>
         private void DeleteSelectedRDPConnection()
         {
             MessageBoxResult result = MessageBox.Show("Aktuelle RDP Verbindung entfernen?", "Löschen", MessageBoxButton.YesNo);
@@ -266,6 +319,9 @@ namespace RDPSlave
             
             NotifyPropertyChanged("ConnectionList");
         }
+        /// <summary>
+        /// creates a new, empty RDPConnection at the end of ConnectionList
+        /// </summary>
         private void CreateRDPConnection()
         {
             if (connections.ConnectionList.Any())
@@ -280,6 +336,10 @@ namespace RDPSlave
             
             NotifyPropertyChanged("ConnectionList");
         }
+        /// <summary>
+        /// processes the provided startup parameters
+        /// </summary>
+        /// <param name="startupArgs">startup parameters</param>
         private void ProcessStartupArgs(string[] startupArgs)
         {
             foreach (string arg in startupArgs)

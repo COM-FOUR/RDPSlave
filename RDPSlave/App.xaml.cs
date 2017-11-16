@@ -15,6 +15,11 @@ namespace RDPSlave
     /// </summary>
     public partial class App : Application
     {
+        /// <summary>
+        /// creates viewmodel and passes provided startupArgs, shows mainwindow if needed, or shuts application down, after hidden operations
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Application_Startup(object sender, StartupEventArgs e)
         {
             RDPSlaveViewModel model = new RDPSlaveViewModel(this, e.Args);
@@ -32,11 +37,4 @@ namespace RDPSlave
             }
         }
     }
-
-    public class MockViewModel : RDPSlaveViewModel
-    {
-        public MockViewModel() { }
-    }
-
-
 }

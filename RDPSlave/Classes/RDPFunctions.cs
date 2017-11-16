@@ -11,8 +11,14 @@ using System.Xml.Linq;
 
 namespace RDPSlave
 {
+    /// <summary>
+    /// provides methods an classes to connect via rdp
+    /// </summary>
     public class RDPFunctions
     {
+        /// <summary>
+        /// wrapper class for list of multipple connections
+        /// </summary>
         public class RDPConnections : RDPSlaveModel
         {
             #region Locals
@@ -199,6 +205,9 @@ namespace RDPSlave
             #endregion
 
         }
+        /// <summary>
+        /// Contains necessary fields for rdp conection
+        /// </summary>
         public class RDPConnection : RDPSlaveModel
         {
             #region Locals
@@ -246,10 +255,20 @@ namespace RDPSlave
         }
 
         #region Static Methods
+        /// <summary>
+        /// starts a rdp session with provided RDPConnection
+        /// </summary>
+        /// <param name="rdp">RDPConnection to connect to</param>
         public static void StartRDPSession(RDPConnection rdp)
         {
             StartRDPSession(rdp.Host, rdp.UserName, rdp.Password);
         }
+        /// <summary>
+        /// starts a rdp session with provided credentials
+        /// </summary>
+        /// <param name="serverIP">name or ip of rdp host</param>
+        /// <param name="userName">username for rdp session</param>
+        /// <param name="password">password for rdp session</param>
         public static void StartRDPSession(string serverIP, string userName, string password)
         {
             Process rdcProcess = new Process();
