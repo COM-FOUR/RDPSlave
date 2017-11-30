@@ -92,6 +92,7 @@ namespace RDPSlave
         internal RelayCommand createConnectionCommand;
         internal RelayCommand saveConnectionsCommand;
         internal RelayCommand loadConnectionsCommand;
+        internal RelayCommand incMaxDisplTaskbarItemsCommand;
 
         /// <summary>
         /// starts session for currently selected RDPConnection
@@ -166,6 +167,21 @@ namespace RDPSlave
                         param => true);
                 }
                 return loadConnectionsCommand;
+            }
+        }
+        /// <summary>
+        /// increases the maximum number of displayed JumpListItems in WindowsTaskbar to current count of RDPConnections
+        /// </summary>
+        public ICommand IncMaxDisplTaskbarItemsCommand
+        {
+            get
+            {
+                if (incMaxDisplTaskbarItemsCommand == null)
+                {
+                    incMaxDisplTaskbarItemsCommand = new RelayCommand(param => this.IncreaseMaxDisplayedJumpListItems(this.ConnectionList.Count),
+                        param => true);
+                }
+                return incMaxDisplTaskbarItemsCommand;
             }
         }
         #endregion
@@ -359,6 +375,28 @@ namespace RDPSlave
                         break;
                 }
             }
+        }
+        /// <summary>
+        /// increases the maximum number of displayed JumpListItems in WindowsTaskbar to current count of RDPConnections
+        /// </summary>
+        /// <param name="count">number to be set as maximum</param>
+        private void IncreaseMaxDisplayedJumpListItems(int count)
+        {
+            
+
+            if (count >=1 && count<10)
+            {
+                count = 15;
+            }
+            else if (count >= 10 && count < 20)
+            {
+                count = 25;
+            }
+            else if (count >= 20)
+            {
+                count = 35;
+            }
+            Helpers.SetMaxJumpListItems(count);
         }
         #endregion
     }

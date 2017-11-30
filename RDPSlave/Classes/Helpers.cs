@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -19,7 +20,7 @@ namespace RDPSlave
         /// <param name="parentEl">XElement to search in</param>
         /// <param name="elementName">name of element to search for</param>
         /// <param name="defaultValue">default value, if element is not found</param>
-        /// <returns></returns>
+        /// <returns>return value</returns>
         public static string TryGetElementValue(this XElement parentEl, string elementName, string defaultValue = null)
         {
             var foundEl = parentEl.Element(elementName);
@@ -30,6 +31,27 @@ namespace RDPSlave
             }
 
             return defaultValue;
+        }
+        /// <summary>
+        /// sets the maximum number of JumplistItems displayed in WindowsTaskbar
+        /// </summary>
+        /// <param name="count">maximum number to be set</param>
+        /// <returns>true, if succeeded</returns>
+        public static bool SetMaxJumpListItems(int count)
+        {
+            bool result = false;
+
+            try
+            {
+                Registry.SetValue(@"HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced", "JumpListItems_Maximum", count, RegistryValueKind.DWord);
+                
+                result = true;
+            }
+            catch (Exception)
+            {
+                result = false;
+            }
+            return result;
         }
     }
 }

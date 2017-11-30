@@ -49,8 +49,13 @@
             <MenuItem Header="Bearbeiten">
                 <MenuItem Header="Neu" Command="{Binding CreateConnectionCommand}"/>
                 <MenuItem Header="Löschen" Command="{Binding DeleteConnectionCommand}"/>
+                <Separator/>
                 <MenuItem Header="Speichern" Command="{Binding SaveConnectionsCommand}"/>
                 <MenuItem Header="Laden" Command="{Binding LoadConnectionsCommand}"/>
+                
+            </MenuItem>
+            <MenuItem Header="Extras">
+                <MenuItem Header="max. JumpList Einträge erhöhen" Command="{Binding IncMaxDisplTaskbarItemsCommand}"/>
             </MenuItem>
         </Menu>
         <StatusBar DockPanel.Dock="Bottom" BorderBrush="Aquamarine" BorderThickness="2" Margin="3">
