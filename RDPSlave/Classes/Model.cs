@@ -84,6 +84,7 @@ namespace RDPSlave
         internal RDPFunctions.RDPConnections connections = new RDPFunctions.RDPConnections();
         internal RDPFunctions.RDPConnection selectedRDPConnection = new RDPFunctions.RDPConnection();
         internal bool silentProcessing = true;
+        internal ObservableCollection<RDPFunctions.RDPConnection> connectionList = new ObservableCollection<RDPFunctions.RDPConnection>();
         #endregion
 
         #region Comamnds
@@ -93,6 +94,8 @@ namespace RDPSlave
         internal RelayCommand saveConnectionsCommand;
         internal RelayCommand loadConnectionsCommand;
         internal RelayCommand incMaxDisplTaskbarItemsCommand;
+        internal RelayCommand moveUpInConnectionListCommand;
+        internal RelayCommand moveDownInConnectionListCommand;
 
         /// <summary>
         /// starts session for currently selected RDPConnection
@@ -184,6 +187,37 @@ namespace RDPSlave
                 return incMaxDisplTaskbarItemsCommand;
             }
         }
+        /// <summary>
+        /// moves selected RDPconnection up in list
+        /// </summary>
+        public ICommand MoveUpInConnectionListCommand
+        {
+            get
+            {
+                if (moveUpInConnectionListCommand == null)
+                {
+                    moveUpInConnectionListCommand = new RelayCommand(param => this.MoveItemInConnectionlist(-1),
+                        param => true);
+                }
+                return moveUpInConnectionListCommand;
+            }
+        }
+        /// <summary>
+        /// moves selected RDPconnection down in list
+        /// </summary>
+        public ICommand MoveDownInConnectionListCommand
+        {
+            get
+            {
+                if (moveDownInConnectionListCommand == null)
+                {
+                    moveDownInConnectionListCommand = new RelayCommand(param => this.MoveItemInConnectionlist(+1),
+                        param => true);
+                }
+                return moveDownInConnectionListCommand;
+            }
+        }
+
         #endregion
 
         #region Globals
@@ -194,7 +228,8 @@ namespace RDPSlave
         /// <summary>
         /// observable list of RDPConnection for binding purpose
         /// </summary>
-        public ObservableCollection<RDPFunctions.RDPConnection> ConnectionList { get { return new ObservableCollection<RDPFunctions.RDPConnection>(connections.ConnectionList); } set { connections.ConnectionList = value.ToList<RDPFunctions.RDPConnection>(); NotifyPropertyChanged("ConnectionList"); } }
+        //public ObservableCollection<RDPFunctions.RDPConnection> ConnectionList { get { return new ObservableCollection<RDPFunctions.RDPConnection>(connections.ConnectionList); } set { connections.ConnectionList = value.ToList<RDPFunctions.RDPConnection>(); NotifyPropertyChanged("ConnectionList"); } }
+        public ObservableCollection<RDPFunctions.RDPConnection> ConnectionList { get { return connectionList; } set { connectionList = value; NotifyPropertyChanged("ConnectionList"); } }
         /// <summary>
         /// currently ,via binding selected RDPCOnnection
         /// </summary>
@@ -289,10 +324,15 @@ namespace RDPSlave
             }
 
             connections.LoadConnections();
+            connectionList = new ObservableCollection<RDPFunctions.RDPConnection>(connections.ConnectionList);
             NotifyPropertyChanged("ConnectionList");
-            if (connections.ConnectionList.Count>0)
+            //if (connections.ConnectionList.Count>0)
+            //{
+            //    selectedRDPConnection = connections.ConnectionList.First();
+            //}
+            if (connectionList.Count>0)
             {
-                selectedRDPConnection = connections.ConnectionList.First();
+                selectedRDPConnection = connectionList.First();
             }
         }
         /// <summary>
@@ -316,6 +356,7 @@ namespace RDPSlave
                     return;
                 }
             }
+            connections.ConnectionList = connectionList.ToList();
             connections.SaveConnections();
             NotifyPropertyChanged("ConnectionList");
             this.CreateJumpList();
@@ -331,8 +372,9 @@ namespace RDPSlave
                 return;
             }
 
-            connections.ConnectionList.Remove(selectedRDPConnection);
-            
+            //connections.ConnectionList.Remove(selectedRDPConnection);
+            connectionList.Remove(selectedRDPConnection);
+
             NotifyPropertyChanged("ConnectionList");
         }
         /// <summary>
@@ -397,6 +439,34 @@ namespace RDPSlave
                 count = 35;
             }
             Helpers.SetMaxJumpListItems(count);
+        }
+        /// <summary>
+        /// changes the index of currently selected RDPConnection in list
+        /// </summary>
+        /// <param name="steps">steps to move index</param>
+        private void MoveItemInConnectionlist(int steps)
+        {
+            int currentIndex = ConnectionList.IndexOf(SelectedRDPConnection);
+            int newIndex = currentIndex + steps;
+            
+            if (newIndex<0)
+            {
+                newIndex = 0;
+            }
+            else
+            {
+                int lastIndex = ConnectionList.IndexOf(ConnectionList.Last());
+                if (newIndex>lastIndex)
+                {
+                    newIndex = lastIndex;
+                }
+            }
+            
+            if (currentIndex!=newIndex)
+            {
+                ConnectionList.Move(currentIndex, newIndex);
+                NotifyPropertyChanged("ConnectionList");
+            }
         }
         #endregion
     }

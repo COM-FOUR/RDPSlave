@@ -41,18 +41,31 @@
                 </Grid>
             </Border>
         </DataTemplate>
-
     </Window.Resources>
+    <Window.InputBindings>
+        <KeyBinding Gesture="CTRL+S" Command="{Binding SaveConnectionsCommand}"/>
+        <KeyBinding Gesture="CTRL+N" Command="{Binding CreateConnectionCommand}"/>
+        <KeyBinding Gesture="CTRL+L" Command="{Binding LoadConnectionsCommand}"/>
+        <KeyBinding Gesture="CTRL+R" Command="{Binding StartSessionCommand}"/>
+        <KeyBinding Gesture="DELETE" Command="{Binding DeleteConnectionCommand}"/>
+        <KeyBinding Gesture="CTRL+U" Command="{Binding MoveUpInConnectionListCommand}"/>
+        <KeyBinding Gesture="CTRL+D" Command="{Binding MoveDownInConnectionListCommand}"/>
+    </Window.InputBindings>
     <DockPanel Background="Gray">
         <Menu DockPanel.Dock="Top" Height="20">
-            <MenuItem Header="Verbinden" Command="{Binding StartSessionCommand}"/>
+            <MenuItem Header="Verbindung">
+                <MenuItem Header="Starten  (Strg+R)" Command="{Binding StartSessionCommand}"/>
+            </MenuItem>
             <MenuItem Header="Bearbeiten">
-                <MenuItem Header="Neu" Command="{Binding CreateConnectionCommand}"/>
-                <MenuItem Header="Löschen" Command="{Binding DeleteConnectionCommand}"/>
+                <MenuItem Header="Neu (Strg+N)" Command="{Binding CreateConnectionCommand}"/>
+                <MenuItem Header="Löschen (Entf)" Command="{Binding DeleteConnectionCommand}"/>
                 <Separator/>
-                <MenuItem Header="Speichern" Command="{Binding SaveConnectionsCommand}"/>
-                <MenuItem Header="Laden" Command="{Binding LoadConnectionsCommand}"/>
-                
+                <MenuItem Header="Speichern (Strg+S)" Command="{Binding SaveConnectionsCommand}"/>
+                <MenuItem Header="Laden (Strg+L)" Command="{Binding LoadConnectionsCommand}"/>
+            </MenuItem>
+            <MenuItem Header="Anordnen">
+                <MenuItem Header="Hoch (Strg+U)" Command="{Binding MoveUpInConnectionListCommand}"/>
+                <MenuItem Header="Runter (Strg+D)" Command="{Binding MoveDownInConnectionListCommand}"/>
             </MenuItem>
             <MenuItem Header="Extras">
                 <MenuItem Header="max. JumpList Einträge erhöhen" Command="{Binding IncMaxDisplTaskbarItemsCommand}"/>
@@ -68,6 +81,6 @@
                 <Run Text="{Binding Connections.LastErrorMessage, Mode=OneWay}" Foreground="Red"></Run>
             </TextBlock>
         </StatusBar>
-        <ListBox BorderBrush="Aquamarine" BorderThickness="2" Margin="3" Background="DimGray" ItemsSource="{Binding ConnectionList, Mode=TwoWay}" ScrollViewer.VerticalScrollBarVisibility="Visible" ItemTemplate="{StaticResource connectionItem}" SelectedItem="{Binding SelectedRDPConnection, Mode=TwoWay}"/>
+        <ListBox x:Name="lbConnections" BorderBrush="Aquamarine" BorderThickness="2" Margin="3" Background="DimGray" ItemsSource="{Binding ConnectionList, Mode=TwoWay}" ScrollViewer.VerticalScrollBarVisibility="Visible" ItemTemplate="{StaticResource connectionItem}" SelectedItem="{Binding SelectedRDPConnection, Mode=TwoWay}"/>
     </DockPanel>
 </Window>
