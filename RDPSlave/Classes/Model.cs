@@ -291,7 +291,7 @@ namespace RDPSlave
 
                 jt.Title = item.Name;
                 jt.Description = item.Host;
-                jt.Arguments = item.Name;
+                jt.Arguments = string.Format("\"{0}\"",item.Name);
                 jt.CustomCategory = item.Group;
                 jt.ApplicationPath = Assembly.GetEntryAssembly().CodeBase;
                 jt.IconResourcePath = Assembly.GetEntryAssembly().CodeBase;
