@@ -382,14 +382,14 @@ namespace RDPSlave
         /// </summary>
         private void CreateRDPConnection()
         {
-            if (connections.ConnectionList.Any())
+            if (connectionList.Any())
             {
-                var lastItem = connections.ConnectionList.Last();
-                connections.ConnectionList.Add(new RDPFunctions.RDPConnection(lastItem.Order + 1));
+                var lastItem = connectionList.Last();
+                connectionList.Add(new RDPFunctions.RDPConnection(lastItem.Order + 1));
             }
             else
             {
-                connections.ConnectionList.Add(new RDPFunctions.RDPConnection(1));
+                connectionList.Add(new RDPFunctions.RDPConnection(1));
             }
             
             NotifyPropertyChanged("ConnectionList");
