@@ -11,7 +11,7 @@
         Name="mw">
     <Window.Resources>
         <DataTemplate x:Key="connectionItem">
-            <Border BorderBrush="MediumAquamarine" BorderThickness="2" Margin="3" Background="LightGray">
+            <Border BorderBrush="Gray" BorderThickness="2" Margin="3" Background="Honeydew">
                 <Grid Margin="3">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="80"/>
@@ -51,7 +51,7 @@
         <KeyBinding Gesture="CTRL+U" Command="{Binding MoveUpInConnectionListCommand}"/>
         <KeyBinding Gesture="CTRL+D" Command="{Binding MoveDownInConnectionListCommand}"/>
     </Window.InputBindings>
-    <DockPanel Background="Gray">
+    <DockPanel Background="LightGray">
         <Menu DockPanel.Dock="Top" Height="20">
             <MenuItem Header="Verbindung">
                 <MenuItem Header="Starten  (Strg+R)" Command="{Binding StartSessionCommand}"/>
@@ -71,7 +71,7 @@
                 <MenuItem Header="max. JumpList Einträge erhöhen" Command="{Binding IncMaxDisplTaskbarItemsCommand}"/>
             </MenuItem>
         </Menu>
-        <StatusBar DockPanel.Dock="Bottom" BorderBrush="Aquamarine" BorderThickness="2" Margin="3">
+        <StatusBar DockPanel.Dock="Bottom" BorderBrush="Gray" BorderThickness="2" Margin="3">
             <TextBlock>
                 <Run>Anzahl Verbindungen: </Run>
                 <Run Text="{Binding ConnectionList.Count, Mode=OneWay}"/>
@@ -81,6 +81,6 @@
                 <Run Text="{Binding Connections.LastErrorMessage, Mode=OneWay}" Foreground="Red"></Run>
             </TextBlock>
         </StatusBar>
-        <ListBox x:Name="lbConnections" BorderBrush="Aquamarine" BorderThickness="2" Margin="3" Background="DimGray" ItemsSource="{Binding ConnectionList, Mode=TwoWay}" ScrollViewer.VerticalScrollBarVisibility="Visible" ItemTemplate="{StaticResource connectionItem}" SelectedItem="{Binding SelectedRDPConnection, Mode=TwoWay}"/>
+        <ListBox x:Name="lbConnections" BorderBrush="Gray" BorderThickness="2" Margin="3" Background="LightGray" ItemsSource="{Binding ConnectionList, Mode=TwoWay}" ScrollViewer.VerticalScrollBarVisibility="Visible" ItemTemplate="{StaticResource connectionItem}" SelectedItem="{Binding SelectedRDPConnection, Mode=TwoWay}"/>
     </DockPanel>
 </Window>
