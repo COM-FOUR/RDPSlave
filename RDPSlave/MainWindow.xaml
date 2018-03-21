@@ -76,7 +76,7 @@
                 <Run>Anzahl Verbindungen: </Run>
                 <Run Text="{Binding ConnectionList.Count, Mode=OneWay}"/>
             </TextBlock>
-            <Separator></Separator>
+            <!--<Separator></Separator>-->
             <TextBlock>
                 <Run Text="{Binding Connections.LastErrorMessage, Mode=OneWay}" Foreground="Red"></Run>
             </TextBlock>
